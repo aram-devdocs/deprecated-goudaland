@@ -44,28 +44,27 @@ export default function Login(props) {
       .then((r) => {
         console.log(r);
         _state.set.loggedIn(r.data);
-        setDebug(r.statusText);
+        axios.defaults.headers.common["x-access-token"] = r.data.token;
+        setDebug(JSON.stringify(r.data));
       })
       .catch((e) => {
         console.log(e);
-        setDebug(JSON.stringify(e.response));
+        setDebug(e.response.data);
       });
   }
 
-  function debugUser() {
+  function debugAPI() {
     // TODO - encrypt using bcrypt and pass a JWT to _state
     axios
-      .post("/users/login", form)
+      .get("/users/welcome")
       .then((r) => {
-        if (r.data) {
-          setDebug(r.response.data);
-        }
+        console.log(r);
       })
       .catch((e) => console.log(e));
   }
 
   useEffect(() => {
-    console.log("log in time");
+    // console.log("log in time");
   });
   return (
     <Container>
@@ -140,9 +139,9 @@ export default function Login(props) {
       ) : (
         <></>
       )}
-      {/* <Button onClick={debugUser} variant="outlined">
+      <Button onClick={debugAPI} variant="outlined">
         DEBUG
-      </Button> */}
+      </Button>
       <Typography>Login Response: {debug}</Typography>
     </Container>
   );
