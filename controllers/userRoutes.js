@@ -2,51 +2,94 @@ const bcrypt = require("bcrypt");
 const express = require("express");
 const User = require("../models/user");
 const router = express.Router();
+const jwt = require("jsonwebtoken");
+const auth = require("../middleware/auth");
 
-// signup route
-router.post("/signup", async (req, res) => {
-  const body = req.body;
+router.post("/register", async (req, res) => {
+  try {
+    // Get user input
+    const { fname, lname, email, password } = req.body;
 
-  // Check for existing email
-  const existingUser = await User.findOne({ username: body.usernamel });
-  if (!existingUser)
-    return res
-      .status(401)
-      .json({ status: false, error: "User already exists" });
+    // Validate user input
+    if (!(email && password && fname && lname)) {
+      return res.status(400).send("All input is required");
+    }
 
-  if (!(body.username && body.password)) {
-    return res
-      .status(400)
-      .send({ status: false, error: "Data not formatted properly" });
+    // check if user already exist
+    // Validate if user exist in our database
+    const oldUser = await User.findOne({ email });
+
+    if (oldUser) {
+      return res.status(409).send("User Already Exist. Please Login");
+    }
+
+    //Encrypt user password
+    encryptedPassword = await bcrypt.hash(password, 10);
+
+    // Create user in our database
+    const user = await User.create({
+      fname,
+      lname,
+      email: email.toLowerCase(), // sanitize: convert email to lowercase
+      password: encryptedPassword,
+    });
+
+    // Create token
+    const token = jwt.sign(
+      { user_id: user._id, email },
+      process.env.TOKEN_KEY,
+      {
+        expiresIn: "2h",
+      }
+    );
+    // save user token
+    user.token = token;
+
+    // return new user
+    return res.status(201).json(user);
+  } catch (err) {
+    console.log(err);
   }
-
-  // generate salt to hash password
-  const salt = await bcrypt.genSalt(10);
-  // now we set user password to hashed password
-  const crpytPassword = await bcrypt.hash(body.password, salt);
-
-  User.create({ username: body.username, password: crpytPassword });
-  res.status(200).send({ status: true, message: "User created successfully" });
-  // .catch((e) =>
-  //   console.log(e)
-  // );
 });
 
-// login route
 router.post("/login", async (req, res) => {
-  const body = req.body;
-  const user = await User.findOne({ username: body.username });
-  if (user) {
-    // check user password with hashed password stored in the database
-    const validPassword = await bcrypt.compare(body.password, user.password);
-    if (validPassword) {
-      res.status(200).json({ status: true, message: "Valid password" });
-    } else {
-      res.status(400).json({ status: false, error: "Invalid Password" });
+  try {
+    // Get user input
+    const { email, password } = req.body;
+
+    // Validate user input
+    if (!(email && password)) {
+      return res.status(400).send("All input is required");
     }
-  } else {
-    res.status(401).json({ status: false, error: "User does not exist" });
+    // Validate if user exist in our database
+    let user = await User.findOne({ email });
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+      // Create token
+      const token = jwt.sign(
+        { user_id: user._id, email },
+        process.env.TOKEN_KEY,
+        {
+          expiresIn: "2h",
+        }
+      );
+
+      // save user token
+      user.token = token;
+      user.password = undefined;
+      console.log(user);
+
+      // user
+      return res.status(200).json(user);
+    }
+    return res.status(400).send("Invalid Credentials");
+  } catch (err) {
+    console.log(err);
   }
+});
+
+router.get("/welcome", auth, (req, res) => {
+  return res.status(200).send("Welcome 🙌 ");
 });
 
 module.exports = router;
