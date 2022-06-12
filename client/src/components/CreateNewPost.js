@@ -4,6 +4,7 @@ import Editor from "./Editor";
 import { Button, Paper, Input, Typography } from "@mui/material";
 import axios from "axios";
 export default function CreateNewPost(props) {
+  const { _state } = props;
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [preview, setPreview] = useState(false);
@@ -14,6 +15,7 @@ export default function CreateNewPost(props) {
       .post("/posts/create", { title, content })
       .then((r) => {
         console.log(r);
+        _state.set.content("landing");
       })
       .catch((e) => {
         console.log(e);

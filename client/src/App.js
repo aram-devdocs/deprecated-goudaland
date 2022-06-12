@@ -74,7 +74,7 @@ export default function App() {
   // Helpers
   const contentComponents = {
     landing: <Landing _state={_state} />,
-    admin: <CreateNewPost />,
+    admin: <CreateNewPost _state={_state} />,
   };
 
   return (
