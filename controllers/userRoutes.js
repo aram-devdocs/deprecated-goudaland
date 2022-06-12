@@ -5,6 +5,18 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const auth = require("../middleware/auth");
 
+router.post("/", auth, (req, res) => {
+  // Create token
+  const token = jwt.sign(
+    { user_id: req.body._id, email: req.body.email },
+    process.env.TOKEN_KEY,
+    {
+      expiresIn: "2h",
+    }
+  );
+  res.status(200).send(token);
+});
+
 router.post("/register", async (req, res) => {
   try {
     // Get user input
