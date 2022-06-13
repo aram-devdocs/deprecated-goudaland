@@ -5,13 +5,15 @@ import { createTheme } from "@mui/material/styles";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#9EEAF9",
+      main: "#035469",
     },
     secondary: {
-      main: "#9575CD",
+      main: "#70E65C", // Light green
     },
+
     background: {
-      default: "#2C2E3B",
+      default: "#70B8DA", // Light Blue
+      secondary: "white",
     },
   },
   typography: {
@@ -20,10 +22,10 @@ const theme = createTheme({
     h1: {
       fontSize: "2.2rem",
       fontWeight: 400,
-      color: "#9EEAF9",
+      color: "#035469",
     },
     body1: {
-      color: "#9EEAF9",
+      color: "black",
     },
   },
 });

@@ -6,13 +6,15 @@ import axios from "axios";
 export default function CreateNewPost(props) {
   const { _state } = props;
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
   const [content, setContent] = useState("");
   const [preview, setPreview] = useState(false);
 
   function submitPost() {
     console.log(content);
     axios
-      .post("/posts/create", { title, content })
+      .post("/posts/create", { title, content, description })
       .then((r) => {
         console.log(r);
         _state.set.content("landing");
@@ -23,7 +25,7 @@ export default function CreateNewPost(props) {
   }
   return (
     <Container>
-      Create new post:{" "}
+      <Typography>Create new post:</Typography>
       {!preview ? (
         <div>
           <Paper>
@@ -31,6 +33,15 @@ export default function CreateNewPost(props) {
               placeholder="Title"
               onChange={(e) => setTitle(e.target.value)}
               value={title}
+              required
+            />
+            <br />
+            <Input
+              placeholder="Description (Optional)"
+              onChange={(e) => setDescription(e.target.value)}
+              value={description}
+              fullWidth
+              sx={{ height: "100px" }}
             />
           </Paper>
 
