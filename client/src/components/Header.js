@@ -8,9 +8,16 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import AddIcon from "@mui/icons-material/Add";
 import { Tooltip } from "@mui/material";
+import axios from "axios";
 
 export default function Header(props) {
   const { _state } = props;
+
+  function logout() {
+    _state.set.loggedIn(null);
+    axios.defaults.headers.common["x-access-token"] = "";
+    localStorage.setItem("role", null);
+  }
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
@@ -19,7 +26,7 @@ export default function Header(props) {
             onClick={() => _state.set.content("landing")}
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1,  cursor: "pointer" }}
+            sx={{ flexGrow: 1, cursor: "pointer" }}
           >
             Goudaland
           </Typography>
@@ -36,7 +43,7 @@ export default function Header(props) {
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <Button onClick={() => _state.set.loggedIn(null)} color="inherit">
+          <Button onClick={logout} color="inherit">
             Logout
           </Button>
         </Toolbar>

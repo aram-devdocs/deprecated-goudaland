@@ -16,7 +16,6 @@ export default function App() {
     axios.defaults.baseURL = "http://localhost:3005"; // MOVE TO PROCESS
 
   // Set App States
-  const [tabIndex, setTabIndex] = useState(0);
   const [masterLoader, setLoader] = useState(true);
   const [content, setContent] = useState("landing");
   // Set _state States
@@ -24,14 +23,17 @@ export default function App() {
   const [loggedIn, setLoggedIn] = useState(
     JSON.parse(localStorage.getItem("loggedIn")) || null
   );
+  const [role, setRole] = useState(localStorage.getItem("role") || "student");
 
   // Global _state handler
   const _state = {
     get: {
       view: view,
+      role: role,
     },
     set: {
       view: (data) => setView(data),
+      role: (data) => setRole(data),
       content: (data) => setContent(data),
       loggedIn: (data) => {
         const storage = data ? JSON.stringify(data) : null;
@@ -52,7 +54,7 @@ export default function App() {
       axios
         .post("/users", loggedIn)
         .then((r) => {
-          console.log(r);
+          // console.log(r);
           _state.set.loggedIn({ ...loggedIn, token: r.data });
           setLoader(false);
         })

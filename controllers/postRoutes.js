@@ -9,11 +9,19 @@ router.get("/", auth, async (req, res) => {
   res.status(200).send(posts);
 });
 
-
 router.post("/create", auth, async (req, res) => {
-    const post = await Post.create(req.body);
+  const post = await Post.create(req.body);
 
-    res.status(200).send(post)
-} )
+  res.status(200).send(post);
+});
+
+router.post("/delete", auth, async (req, res) => {
+  if (req.user.role !== "admin")
+    return res.status(400).send({user: req.user, message: "Only admins can delete post"});
+
+  const post = await Post.deleteOne({_id: req.body.id});
+
+  res.status(200).send(post);
+});
 
 module.exports = router;
