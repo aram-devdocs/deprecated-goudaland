@@ -1,4 +1,10 @@
-import { Box, CssBaseline, ThemeProvider } from "@mui/material";
+import {
+  Box,
+  CssBaseline,
+  IconButton,
+  ThemeProvider,
+  Tooltip,
+} from "@mui/material";
 import React, { useEffect, useState } from "react";
 import theme from "./theme";
 import axios from "axios";
@@ -8,6 +14,8 @@ import { Container } from "@mui/system";
 import Header from "./components/Header";
 import CreateNewPost from "./components/CreateNewPost";
 import Landing from "./components/Landing";
+import Posts from "./components/Posts";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 export default function App() {
   // Handle Axios Settings
   axios.defaults.baseURL = "http://localhost:3005"; // PROD: MOVE TO PROCESS
@@ -18,6 +26,7 @@ export default function App() {
   // Set App States
   const [masterLoader, setLoader] = useState(true);
   const [content, setContent] = useState("landing");
+  const [history, setHistory] = useState([]);
   // Set _state States
   const [view, setView] = useState([]);
   const [loggedIn, setLoggedIn] = useState(
@@ -34,7 +43,16 @@ export default function App() {
     set: {
       view: (data) => setView(data),
       role: (data) => setRole(data),
-      content: (data) => setContent(data),
+      content: (data) => {
+        if (data === history[history.length - 1]) return;
+        if (data === "landing") {
+          setHistory([]);
+          setContent("landing");
+          return;
+        }
+        setHistory([...history, data]);
+        setContent(data);
+      },
       loggedIn: (data) => {
         const storage = data ? JSON.stringify(data) : null;
         localStorage.setItem("loggedIn", storage);
@@ -90,6 +108,10 @@ export default function App() {
   const contentComponents = {
     landing: <Landing _state={_state} />,
     admin: <CreateNewPost _state={_state} />,
+    posts: <Posts _state={_state} />,
+    calendar: "",
+    activites: "",
+    settings: "",
   };
 
   return (
@@ -103,6 +125,30 @@ export default function App() {
         {loggedIn && <Header _state={_state} />}
 
         <main style={{ marginTop: "70px" }}>
+          {loggedIn && content !== "landing" && (
+            <Tooltip
+              title={
+                history.length > 1 ? history[history.length - 2] : "Landing"
+              }
+            >
+              <IconButton
+                onClick={() => {
+                  console.log(history);
+                  if (history.length > 1) {
+                    setContent(history[history.length - 2]);
+                    const newHistory = history;
+                    newHistory.pop();
+                    setHistory(newHistory);
+                    return;
+                  }
+                  setHistory([]);
+                  setContent("landing");
+                }}
+              >
+                <ArrowBackIcon />
+              </IconButton>
+            </Tooltip>
+          )}
           {masterLoader ? (
             <MasterLoader />
           ) : (

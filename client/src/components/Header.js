@@ -48,7 +48,7 @@ export default function Header(props) {
             <Tooltip title={"Home"}>
               <IconButton
                 onClick={() => _state.set.content("landing")}
-                sx={{ paddingRight: "70%" }}
+                // sx={{ paddingRight: "70%" }}
               >
                 <Box
                   component={"img"}
@@ -63,7 +63,7 @@ export default function Header(props) {
           <Typography
             variant="h6"
             component="div"
-            sx={{ cursor: "pointer", color: "white" }}
+            sx={{ color: "white" }}
           >
             Goudaland
           </Typography>
