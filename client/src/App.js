@@ -47,7 +47,15 @@ export default function App() {
   };
 
   useEffect(() => {
+    // Handle last view
     // Handle login state
+    // const lastContent = localStorage.getItem("content") || "landing";
+
+    // if (lastContent !== content) {
+    //   localStorage.setItem("content", lastContent);
+
+    //   setContent(lastContent);
+    // }
     if (masterLoader && loggedIn) {
       axios.defaults.headers.common["x-access-token"] = loggedIn.token;
 
@@ -71,7 +79,12 @@ export default function App() {
       console.log("not logged in");
       setLoader(false);
     }
-  }, [loggedIn, masterLoader, _state.set]);
+
+    return () => {
+      // Set last view
+      // localStorage.setItem("content", content);
+    };
+  }, [loggedIn, masterLoader, _state.set, content]);
 
   // Helpers
   const contentComponents = {
@@ -87,7 +100,9 @@ export default function App() {
           backgroundColor: (theme) => theme.palette.background.default,
         }}
       >
-        <main>
+        {loggedIn && <Header _state={_state} />}
+
+        <main style={{ marginTop: "70px" }}>
           {masterLoader ? (
             <MasterLoader />
           ) : (
@@ -95,10 +110,11 @@ export default function App() {
               {!loggedIn ? (
                 <Login _state={_state} />
               ) : (
-                <Container>
-                  <Header _state={_state} />
+                <Box sx={{ margin: 0, padding: 0 }}>
+                  {/* <Box sx={{ height: "30px" }}>&nbsp </Box> */}
+
                   {contentComponents[content]}
-                </Container>
+                </Box>
               )}
             </div>
           )}

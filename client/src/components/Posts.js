@@ -15,6 +15,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import ArrowDropUpRoundedIcon from "@mui/icons-material/ArrowDropUpRounded";
 import ArrowDropDownRoundedIcon from "@mui/icons-material/ArrowDropDownRounded";
 import CommentIcon from "@mui/icons-material/Comment";
+import CloseIcon from "@mui/icons-material/Close";
 
 export default function Posts(props) {
   const { _state } = props;
@@ -53,7 +54,10 @@ export default function Posts(props) {
                     sx={{ color: "black", fontSize: "20px" }}
                   >
                     {p.title}:{" "}
-                    <Box  component={"span"} sx={{ fontSize: "16px", float: "right" }}>
+                    <Box
+                      component={"span"}
+                      sx={{ fontSize: "16px", float: "rightgit s" }}
+                    >
                       {new Date(p.date).toString()}
                     </Box>
                   </Typography>
@@ -61,17 +65,6 @@ export default function Posts(props) {
                   {p.description ? (
                     <Box>
                       <Typography variant="caption">{p.description}</Typography>
-                      <Box
-                        sx={{
-                          visibility: p.showBody ? "visible" : "hidden",
-                        }}
-                      >
-                        <Paper variant="outlined">
-                          <div
-                            dangerouslySetInnerHTML={{ __html: p.content }}
-                          />
-                        </Paper>
-                      </Box>
                     </Box>
                   ) : (
                     <Paper variant="outlined">
@@ -133,6 +126,40 @@ export default function Posts(props) {
                     </IconButton>
                   )}
                 </CardActions>
+                {p.showBody && (
+                  <Box
+                    sx={{
+                      visibility: p.showBody ? "visible" : "hidden",
+                      display: p.showBody ? "block" : "none",
+                    }}
+                  >
+                    <Paper variant="outlined">
+                      <div dangerouslySetInnerHTML={{ __html: p.content }} />
+                      <Tooltip title={p.showBody ? "Hide Body" : "Expand Body"}>
+                        <IconButton
+                          sx={{ float: "right" }}
+                          onClick={() => {
+                            // Expand and show body
+                            setPosts(
+                              posts.map((r) => {
+                                if (r._id === p._id) {
+                                  return {
+                                    ...r,
+                                    showBody: !r.showBody,
+                                  };
+                                } else {
+                                  return r;
+                                }
+                              })
+                            );
+                          }}
+                        >
+                          <CloseIcon />
+                        </IconButton>
+                      </Tooltip>
+                    </Paper>
+                  </Box>
+                )}
               </Card>
             </Paper>
           );

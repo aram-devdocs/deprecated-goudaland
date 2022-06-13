@@ -14,30 +14,41 @@ import { Paper } from "@mui/material";
 export default function Header(props) {
   const { _state } = props;
   const admin = _state.get.role === "admin" ? true : false;
-
   const theme = useTheme();
+
+  // Helpers
   function logout() {
+    _state.set.content("landing");
     _state.set.loggedIn(null);
     axios.defaults.headers.common["x-access-token"] = "";
     localStorage.setItem("role", null);
   }
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box
+      width
+      sx={{
+        flexGrow: 1,
+        width: "100%",
+        position: "fixed",
+        overflow: "hidden",
+        top: "0" /* Position the navbar at the top of the page */,
+      }}
+    >
       <AppBar position="static">
         <Toolbar>
-          <Tooltip title={"Home"}>
-            <Button
-              onClick={() => _state.set.content("landing")}
-              sx={{ flexGrow: 1 }}
-            >
-              <Paper
-                elevation={2}
-                sx={{
-                  background: theme.palette.background.default,
-                  borderRadius: "400px",
-                  marginRight: "10px",
-                  height: "50px",
-                }}
+          <Paper
+            elevation={2}
+            sx={{
+              background: theme.palette.background.default,
+              borderRadius: "400px",
+              marginRight: "10px",
+              height: "50px",
+            }}
+          >
+            <Tooltip title={"Home"}>
+              <IconButton
+                onClick={() => _state.set.content("landing")}
+                sx={{ paddingRight: "70%" }}
               >
                 <Box
                   component={"img"}
@@ -45,17 +56,18 @@ export default function Header(props) {
                   alt="logo"
                   sx={{ height: "50px", width: "100px" }}
                 />
-              </Paper>
+              </IconButton>
+            </Tooltip>
+          </Paper>
 
-              <Typography
-                variant="h6"
-                component="div"
-                sx={{ cursor: "pointer", color: "white" }}
-              >
-                Goudaland
-              </Typography>
-            </Button>
-          </Tooltip>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ cursor: "pointer", color: "white" }}
+          >
+            Goudaland
+          </Typography>
+          {/* </Button> */}
 
           {admin && (
             <Tooltip title="Create new post">
@@ -65,13 +77,13 @@ export default function Header(props) {
                 edge="start"
                 color="inherit"
                 aria-label="menu"
-                sx={{ mr: 2 }}
+                sx={{ marginLeft: "10px" }}
               >
                 <AddIcon />
               </IconButton>
             </Tooltip>
           )}
-          <Button onClick={logout} color="inherit">
+          <Button sx={{ marginLeft: "70%" }} onClick={logout} color="inherit">
             Logout
           </Button>
         </Toolbar>
