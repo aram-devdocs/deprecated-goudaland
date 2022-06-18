@@ -28,6 +28,7 @@ mongoose
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", `*`);
   res.header("Access-Control-Allow-Headers", "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, DELETE");
   next();
 });
 
@@ -45,6 +46,7 @@ app.get("/", (req, res) => {
 app.use("/users", require("./controllers/userRoutes"));
 app.use("/posts", require("./controllers/postRoutes"));
 app.use("/modules", require("./controllers/moduleRoutes"));
+app.use("/activites", require("./controllers/activityRoutes"));
 
 // This should be the last route else any after it won't work
 app.use("*", (req, res) => {

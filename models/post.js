@@ -8,4 +8,4 @@ const postSchema = new mongoose.Schema({
   // author: () // TODO : Add Author
 });
 
-module.exports = mongoose.model("posts", postSchema);
+module.exports = mongoose.model("Post", postSchema);

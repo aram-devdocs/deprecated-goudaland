@@ -1,5 +1,5 @@
 import { Container } from "@mui/system";
-import { Button, Input, Paper } from "@mui/material";
+import { Button, Input, MenuItem, Paper, Select } from "@mui/material";
 import { useEffect, useState } from "react";
 import MUIDataTable from "mui-datatables";
 
@@ -24,7 +24,7 @@ export default function CreateNewModule(props) {
       .then((r) => {
         if (r.status === 200) {
           console.log(r);
-          setModules([...modules, r.data.data]);
+          setModules([...modules, { ...r.data.data, activity: [] }]);
         } else {
           throw new Error();
         }
@@ -72,15 +72,50 @@ export default function CreateNewModule(props) {
         sort: false,
       },
     },
-
     {
-      name: "delete",
-      label: "Delete",
+      name: "activites",
+      label: "Activites",
       options: {
         filter: false,
         sort: false,
-        customBodyRenderLite: () => {
-          return <Button>Delete</Button>;
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          return (
+            <Select>
+              {modules[dataIndex].activity.map((a) => (
+                <MenuItem key={a.id} value={a.id}>
+                  {a.title}
+                </MenuItem>
+              ))}
+            </Select>
+          );
+        },
+      },
+    },
+
+    {
+      name: "",
+      label: "",
+      options: {
+        filter: false,
+        sort: false,
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          const moduleId = modules[dataIndex].id;
+          return (
+            <Button
+              onClick={() => {
+                axios
+                  .delete(`/modules/${moduleId}`)
+                  .then((r) => {
+                    if (r.status === 200) {
+                      setModules(modules.filter((m) => m.id !== moduleId));
+                    }
+                  })
+                  .catch((e) => console.log(e));
+              }}
+            >
+              Delete
+            </Button>
+          );
         },
       },
     },

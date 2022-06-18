@@ -7,7 +7,7 @@ import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 import CreateNewPost from "./CreateNewPost";
 import CreateNewModule from "./CreateNewModule";
-
+import CreateNewActivity from "./CreateNewActivity";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -61,13 +61,19 @@ export default function Admin(props) {
       </Tabs>
 
       <TabPanel value={value} index={0}>
-        <CreateNewPost _state={_state} />
+        <CreateNewPost
+        // _state={_state}
+        />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <CreateNewModule _state={_state} />
+        <CreateNewModule
+        // _state={_state}
+        />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        Item Three
+        <CreateNewActivity
+        // _state={_state}
+        />
       </TabPanel>
     </Container>
   );

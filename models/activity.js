@@ -8,4 +8,4 @@ const activitySchema = new mongoose.Schema({
   moduleId: { type: mongoose.Schema.Types.ObjectId, ref: "Module" },
 });
 
-module.exports = mongoose.model("activites", activitySchema);
+module.exports = mongoose.model("Activity", activitySchema);

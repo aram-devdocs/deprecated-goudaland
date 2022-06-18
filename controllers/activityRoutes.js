@@ -10,7 +10,7 @@ router.post("/create", auth, (req, res) => {
       .status(400)
       .send("Both title, module, content, and description are required");
 
-  Activity.create({ title, description, content, module })
+  Activity.create({ title, description, content, moduleId })
     .then((r) => {
       res.status(200).send("Activity  created");
     })

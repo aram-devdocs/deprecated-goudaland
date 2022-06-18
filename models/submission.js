@@ -11,4 +11,4 @@ const submisionSchema = new mongoose.Schema({
   grade: { type: Number },
 });
 
-module.exports = mongoose.model("submissions", submissionSchema);
+module.exports = mongoose.model("Submission", submissionSchema);

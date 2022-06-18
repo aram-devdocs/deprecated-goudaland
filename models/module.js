@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const Activity = require("./activity");
+
 
 const moduleSchema = new mongoose.Schema(
   {
@@ -10,10 +12,10 @@ const moduleSchema = new mongoose.Schema(
   { toJSON: { virtuals: true } }
 );
 
-moduleSchema.virtual("activites", {
-  ref: "Class",
+moduleSchema.virtual("activity", {
+  ref: "Activity",
   localField: "_id",
-  foreignField: "module",
+  foreignField: "moduleId",
 });
 
-module.exports = mongoose.model("modules", moduleSchema);
+module.exports = mongoose.model("Module", moduleSchema);
