@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Module = require("./module");
 
 const userSchema = new mongoose.Schema({
   fname: { type: String, default: null, required: true },
@@ -7,6 +8,7 @@ const userSchema = new mongoose.Schema({
   role: { type: String, enum: ["admin", "student"], default: "student" },
   password: { type: String, required: true },
   token: { type: String },
+  modules: [{ type: mongoose.Schema.ObjectId, ref: "Module" }],
 });
 
 module.exports = mongoose.model("user", userSchema);

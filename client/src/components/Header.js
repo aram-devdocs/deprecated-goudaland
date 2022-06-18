@@ -70,7 +70,7 @@ export default function Header(props) {
           {/* </Button> */}
 
           {admin && (
-            <Tooltip title="Create new post">
+            <Tooltip title="Admin Tools">
               <IconButton
                 onClick={() => _state.set.content("admin")}
                 size="large"

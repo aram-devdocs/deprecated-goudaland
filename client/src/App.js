@@ -16,6 +16,8 @@ import CreateNewPost from "./components/CreateNewPost";
 import Landing from "./components/Landing";
 import Posts from "./components/Posts";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Modules from "./components/Modules";
+import Admin from "./components/Admin";
 export default function App() {
   // Handle Axios Settings
   axios.defaults.baseURL = "http://localhost:3005"; // PROD: MOVE TO PROCESS
@@ -107,10 +109,10 @@ export default function App() {
   // Helpers
   const contentComponents = {
     landing: <Landing _state={_state} />,
-    admin: <CreateNewPost _state={_state} />,
+    admin: <Admin _state={_state} />,
     posts: <Posts _state={_state} />,
     calendar: "",
-    activites: "",
+    modules: <Modules _state={_state} />,
     settings: "",
   };
 
@@ -132,6 +134,7 @@ export default function App() {
               }
             >
               <IconButton
+                sx={{ position: "fixed" }}
                 onClick={() => {
                   console.log(history);
                   if (history.length > 1) {

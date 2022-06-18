@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Post = require("../models/post");
 const auth = require("../middleware/auth");
-const { route } = require("./userRoutes");
+// const { route } = require("./userRoutes");
 
 router.get("/", auth, async (req, res) => {
   const posts = await Post.find();

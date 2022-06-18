@@ -50,9 +50,9 @@ export default function Landing(props) {
                 overflow: "auto",
               }}
             >
-              <CardContent>Activites</CardContent>
+              <CardContent>Modules</CardContent>
               <CardActions>
-                <Button size="small">View All</Button>
+                <Button size="small" onClick={()=> _state.set.content("modules")}>View All</Button>
               </CardActions>
             </Card>
           </Paper>
@@ -89,36 +89,7 @@ export default function Landing(props) {
             </Card>
           </Paper>
         </Grid>
-        {admin && (
-          <Grid item xs={6}>
-            <Paper elevation={5}>
-              <Card
-                sx={{
-                  minWidth: 275,
-                  height: "300px",
-                  overflow: "auto",
-                }}
-              >
-                <CardContent>Admin</CardContent>
-                <CardActions>
-                  {/* <Tooltip title="Create new post"> */}
-                    <IconButton
-                      onClick={() => _state.set.content("admin")}
-                      size="large"
-                      edge="start"
-                      color="inherit"
-                      aria-label="menu"
-                      sx={{ marginLeft: "10px" }}
-                    >
-                      <AddIcon />
-                    </IconButton> Create Post
-                  {/* </Tooltip> */}
-                  {/* <Button size="small">View All</Button> */}
-                </CardActions>
-              </Card>
-            </Paper>
-          </Grid>
-        )}
+        
       </Grid>
     </Box>
   );

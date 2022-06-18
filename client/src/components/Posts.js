@@ -41,7 +41,6 @@ export default function Posts(props) {
   }, []);
 
   return (
-    <div>
       <Container>
         <Typography>Posts:</Typography>
         {posts.map((p) => {
@@ -165,6 +164,5 @@ export default function Posts(props) {
           );
         })}
       </Container>
-    </div>
   );
 }

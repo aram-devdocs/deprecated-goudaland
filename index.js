@@ -7,7 +7,6 @@ const MONGO_URI = process.env.MONGO_URI;
 const app = express();
 const mongoose = require("mongoose");
 
-
 // Setup mongoose
 mongoose
   .connect(MONGO_URI, {
@@ -32,7 +31,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-
 app.use(express.json()); //To parse JSON bodies (Applicable for Express 4.16+)
 
 // MIDDLEWARE
@@ -45,7 +43,8 @@ app.get("/", (req, res) => {
 });
 
 app.use("/users", require("./controllers/userRoutes"));
-app.use("/posts", require("./controllers/postRoutes"))
+app.use("/posts", require("./controllers/postRoutes"));
+app.use("/modules", require("./controllers/moduleRoutes"));
 
 // This should be the last route else any after it won't work
 app.use("*", (req, res) => {
