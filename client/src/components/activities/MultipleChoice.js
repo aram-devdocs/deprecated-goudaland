@@ -22,7 +22,7 @@ export default function MultipleChoice(props) {
   }
 
   return (
-    <Paper sx={{ marginBottom: "35px" }}>
+    <Paper sx={{ marginBottom: "3git s5px" }}>
       {question}
       <FormControl>
         {options.map((o) => {
