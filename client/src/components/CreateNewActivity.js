@@ -1,9 +1,18 @@
 import { Container } from "@mui/system";
-import { Button, Input, InputLabel, MenuItem, Paper, Select } from "@mui/material";
+import {
+  Button,
+  Input,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import MUIDataTable from "mui-datatables";
 
 import axios from "axios";
+import MultipleChoice from "./activities/MultipleChoice";
+import CodeCheck from "./activities/CodeCheck";
 export default function CreateNewActivity(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -11,6 +20,8 @@ export default function CreateNewActivity(props) {
   const [moduleId, setModuleId] = useState("n/a");
 
   const [modules, setModules] = useState([]);
+
+  const [questions, setQuestions] = useState([]);
 
   function handleTitle(e) {
     setTitle(e.target.value);
@@ -34,10 +45,10 @@ export default function CreateNewActivity(props) {
       .then((r) => {
         if (r.status === 200) {
           console.log(r);
-          setTitle("")
-          setDescription("")
-          setContent("")
-          setModuleId("n/a")
+          setTitle("");
+          setDescription("");
+          setContent("");
+          setModuleId("n/a");
           //   setModules([...modules, r.data.data]);
         } else {
           throw new Error();
@@ -89,9 +100,24 @@ export default function CreateNewActivity(props) {
             return <MenuItem value={m.id}>{m.title}</MenuItem>;
           })}
         </Select>
+
         <br />
         <Button onClick={createActivity}> Create Activity </Button>
       </Paper>
+
+      <MultipleChoice
+        question={"Test question"}
+        options={[
+          { index: 0, text: "option one" },
+          { index: 1, text: "option two" },
+          { index: 2, text: "option three" },
+          { index: 3, text: "option four" },
+        ]}
+        answer={0}
+      />
+
+      <br />
+      <CodeCheck question={"Code question"} answer={"The text"} />
     </Container>
   );
 }
