@@ -27,7 +27,9 @@ export default function App() {
 
   // Set App States
   const [masterLoader, setLoader] = useState(true);
-  const [content, setContent] = useState("landing");
+  const [content, setContent] = useState(
+    localStorage.getItem("last_content") || "landing"
+  );
   const [history, setHistory] = useState([]);
   // Set _state States
   const [view, setView] = useState([]);
@@ -53,6 +55,7 @@ export default function App() {
           return;
         }
         setHistory([...history, data]);
+        localStorage.setItem("last_content", data);
         setContent(data);
       },
       loggedIn: (data) => {
@@ -68,14 +71,8 @@ export default function App() {
 
   useEffect(() => {
     // Handle last view
+
     // Handle login state
-    // const lastContent = localStorage.getItem("content") || "landing";
-
-    // if (lastContent !== content) {
-    //   localStorage.setItem("content", lastContent);
-
-    //   setContent(lastContent);
-    // }
     if (masterLoader && loggedIn) {
       axios.defaults.headers.common["x-access-token"] = loggedIn.token;
 
@@ -146,6 +143,7 @@ export default function App() {
                   }
                   setHistory([]);
                   setContent("landing");
+                  localStorage.removeItem("last_content")
                 }}
               >
                 <ArrowBackIcon />

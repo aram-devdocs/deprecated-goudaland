@@ -1,16 +1,22 @@
 const mongoose = require("mongoose");
 const Activity = require("./activity");
 
-
 const moduleSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String, maxlength: 300 },
-    //   activites: { type: mongoose.Schema.Types.ObjectId, ref:  },
-    // author: () // TODO : Add Author
   },
   { toJSON: { virtuals: true } }
 );
+
+// hooks
+moduleSchema.post("findOneAndDelete", function () {
+  Activity.deleteMany({ moduleId: this._conditions._id }).then(
+    (deleteStatus) => {
+      console.log(deleteStatus);
+    }
+  );
+});
 
 moduleSchema.virtual("activity", {
   ref: "Activity",

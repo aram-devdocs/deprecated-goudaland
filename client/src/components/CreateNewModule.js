@@ -1,9 +1,17 @@
 import { Container } from "@mui/system";
-import { Button, Input, MenuItem, Paper, Select } from "@mui/material";
+import {
+  Button,
+  IconButton,
+  Input,
+  MenuItem,
+  Paper,
+  Select,
+} from "@mui/material";
 import { useEffect, useState } from "react";
 import MUIDataTable from "mui-datatables";
 
 import axios from "axios";
+import DeleteForever from "@mui/icons-material/DeleteForever";
 export default function CreateNewModule(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -79,11 +87,40 @@ export default function CreateNewModule(props) {
         filter: false,
         sort: false,
         customBodyRenderLite: (dataIndex, rowIndex) => {
+          const moduleId = modules[dataIndex].id;
+
           return (
             <Select>
               {modules[dataIndex].activity.map((a) => (
                 <MenuItem key={a.id} value={a.id}>
-                  {a.title}
+                  {a.title}{" "}
+                  <IconButton
+                    onClick={() => {
+                      axios
+                        .delete(`/activites/${a._id}`)
+                        .then((r) => {
+                          if (r.status === 200) {
+                            setModules(
+                              modules.map((m) => {
+                                if (m.id !== moduleId) {
+                                  return m;
+                                } else {
+                                  return {
+                                    ...m,
+                                    activity: m.activity.filter(
+                                      (ma) => ma._id !== a._id
+                                    ),
+                                  };
+                                }
+                              })
+                            );
+                          }
+                        })
+                        .catch((e) => console.log(e));
+                    }}
+                  >
+                    <DeleteForever fontSize="small" />
+                  </IconButton>
                 </MenuItem>
               ))}
             </Select>

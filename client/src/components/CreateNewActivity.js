@@ -1,5 +1,5 @@
 import { Container } from "@mui/system";
-import { Button, Input, MenuItem, Paper, Select } from "@mui/material";
+import { Button, Input, InputLabel, MenuItem, Paper, Select } from "@mui/material";
 import { useEffect, useState } from "react";
 import MUIDataTable from "mui-datatables";
 
@@ -78,6 +78,7 @@ export default function CreateNewActivity(props) {
           placeholder={"content"}
         />
         <br />
+        <InputLabel>Module:</InputLabel>
         <Select onChange={handleModuleId} value={moduleId}>
           <MenuItem value={"n/a"}>N/A</MenuItem>
           {modules.map((m) => {

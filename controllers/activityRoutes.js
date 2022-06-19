@@ -19,4 +19,14 @@ router.post("/create", auth, (req, res) => {
     });
 });
 
+router.delete("/:activityId", auth, (req, res) => {
+  const { activityId } = req.params;
+  if (!activityId) res.status(400).send("activity id required");
+  Activity.findByIdAndDelete(activityId)
+    .then((r) => {
+      res.status(200).send("activity deleted");
+    })
+    .catch((e) => res.status(400).send({ error: e }));
+});
+
 module.exports = router;
