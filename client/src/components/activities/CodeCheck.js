@@ -2,6 +2,7 @@ import { FormControl, Input, Paper } from "@mui/material";
 import { useState, useEffect } from "react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import CodeEditor from "./CodeEditor";
 
 export default function CodeCheck(props) {
   const { answer, question } = props;
@@ -27,8 +28,7 @@ export default function CodeCheck(props) {
   return (
     <Paper>
       {question}
-      <FormControl>
-        <SyntaxHighlighter
+      {/* <SyntaxHighlighter
           language="javascript"
           style={dark}
           showLineNumbers={true}
@@ -41,8 +41,9 @@ export default function CodeCheck(props) {
           onChange={handleChange}
           value={submission}
           placeholder="Write code here..."
-        ></Input>
-      </FormControl>
+        ></Input> */}
+
+      <CodeEditor language="javascript" />
       {correct !== null && (
         <strong>{correct ? "Correct!" : "Incorrect!"}</strong>
       )}

@@ -1,6 +1,7 @@
 import { Container } from "@mui/system";
 import {
   Button,
+  Checkbox,
   Input,
   InputLabel,
   MenuItem,
@@ -16,12 +17,18 @@ import CodeCheck from "./activities/CodeCheck";
 export default function CreateNewActivity(props) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState([]);
   const [moduleId, setModuleId] = useState("n/a");
-
+  const [preview, setPreview] = useState([]);
   const [modules, setModules] = useState([]);
 
   const [questions, setQuestions] = useState([]);
+
+  const [question, setQuestion] = useState({
+    name: "",
+    choices: [""],
+    answer: 0,
+  });
 
   function handleTitle(e) {
     setTitle(e.target.value);
@@ -59,6 +66,86 @@ export default function CreateNewActivity(props) {
       });
   }
 
+  function setMultipleChoice() {
+    const Choice = (props) => {
+      const { i } = props;
+      return (
+        <div>
+          <Input
+            onChange={(e) => {
+              question.choices = question.choices.map((m, index) => {
+                if (index === i) {
+                  return e.target.value;
+                }
+                return m;
+              });
+            }}
+            // value={question.choices[i]}
+            defaultValue={question.choices[i]}
+            placeholder={`Choice ${i}`}
+          />
+          <Checkbox
+            value={i}
+            checked={question.answer === i}
+            onChange={() => {
+              question.answer = i;
+              // console.log(qu)
+              setMultipleChoice();
+            }}
+          />
+        </div>
+      );
+    };
+    const QuestionForm = (props) => {
+      // useEffect(() => {}, [question.choices]);
+      return (
+        <div>
+          <Input
+            onChange={(e) => {
+              console.log(e.target.value);
+              question.name = e.target.value;
+              // setQuestion({ ...question, name: e.target.value });
+            }}
+            // value={question.name}
+            placeholder="Question name:"
+          />
+          <br />
+          {question.choices.map((q, i) => {
+            return <Choice i={i} />;
+          })}
+
+          <Button
+            onClick={() => {
+              content.push({
+                ...question,
+                choices: question.choices.map((q, i) => {
+                  return { index: i, text: q };
+                }),
+              });
+              setQuestion({ name: "", choices: [""], answer: 0 });
+              setPreview([]);
+            }}
+          >
+            Add To Preview
+          </Button>
+
+          <Button
+            onClick={() => {
+              question.choices.push("");
+              setMultipleChoice();
+            }}
+          >
+            Add Choice
+          </Button>
+        </div>
+      );
+    };
+
+    setPreview(QuestionForm);
+  }
+
+  function setCodeInput() {}
+
   useEffect(() => {
     axios
       .get("/modules")
@@ -87,12 +174,12 @@ export default function CreateNewActivity(props) {
           placeholder={"Description"}
         />
         <br />
-        <Input
+        {/* <Input
           onChange={handleContent}
           value={content}
           placeholder={"content"}
         />
-        <br />
+        <br /> */}
         <InputLabel>Module:</InputLabel>
         <Select onChange={handleModuleId} value={moduleId}>
           <MenuItem value={"n/a"}>N/A</MenuItem>
@@ -103,9 +190,31 @@ export default function CreateNewActivity(props) {
 
         <br />
         <Button onClick={createActivity}> Create Activity </Button>
+        <br></br>
+        <Button onClick={setMultipleChoice}>MultipleChoice</Button>
+        <Button onClick={setCodeInput}>Code Input</Button>
       </Paper>
 
-      <MultipleChoice
+      <Paper>
+        New:
+        <br /> {preview}
+      </Paper>
+
+      <br />
+      {content.length > 0 && (
+        <Paper>
+          Preview:{" "}
+          {content.map((c) => (
+            <MultipleChoice
+              question={c.name}
+              options={c.choices}
+              answer={c.answer}
+            />
+          ))}{" "}
+        </Paper>
+      )}
+
+      {/* <MultipleChoice
         question={"Test question"}
         options={[
           { index: 0, text: "option one" },
@@ -117,7 +226,7 @@ export default function CreateNewActivity(props) {
       />
 
       <br />
-      <CodeCheck question={"Code question"} answer={"The text"} />
+      <CodeCheck question={"Code question"} answer={"The text"} /> */}
     </Container>
   );
 }
