@@ -4,8 +4,9 @@ const Post = require("../models/post");
 const auth = require("../middleware/auth");
 // const { route } = require("./userRoutes");
 
-router.get("/", auth, async (req, res) => {
-  const posts = await Post.find();
+router.get("/:moduleId", auth, async (req, res) => {
+  const { moduleId } = req.params;
+  const posts = await Post.find({ moduleId });
 
   const sorted = posts.sort(function (a, b) {
     // Turn your strings into dates, and then subtract them

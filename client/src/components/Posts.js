@@ -26,7 +26,7 @@ export default function Posts(props) {
 
   useEffect(() => {
     axios
-      .get("/posts")
+      .get(`/posts/${localStorage.getItem("moduleId")}`)
       .then((r) => {
         console.log(r);
         setPosts(
@@ -38,48 +38,103 @@ export default function Posts(props) {
       .catch((e) => {
         console.log(e);
       });
-  }, []);
+  }, [_state.get.selectedModule]);
 
   return (
-      <Container>
-        <Typography>Posts:</Typography>
-        {posts.map((p) => {
-          return (
-            <Paper key={p._id}>
-              <Card sx={{ minWidth: "100px", marginBottom: "10px" }}>
-                <CardContent>
-                  <Typography
-                    variant="h1"
-                    sx={{ color: "black", fontSize: "20px" }}
+    <Container>
+      <Typography>Posts:</Typography>
+      {posts.map((p) => {
+        return (
+          <Paper key={p._id}>
+            <Card sx={{ minWidth: "100px", marginBottom: "10px" }}>
+              <CardContent>
+                <Typography
+                  variant="h1"
+                  sx={{ color: "black", fontSize: "20px" }}
+                >
+                  {p.title}:{" "}
+                  <Box
+                    component={"span"}
+                    sx={{ fontSize: "16px", float: "rightgit s" }}
                   >
-                    {p.title}:{" "}
-                    <Box
-                      component={"span"}
-                      sx={{ fontSize: "16px", float: "rightgit s" }}
-                    >
-                      {new Date(p.date).toString()}
-                    </Box>
-                  </Typography>
+                    {new Date(p.date).toString()}
+                  </Box>
+                </Typography>
 
-                  {p.description ? (
-                    <Box>
-                      <Typography variant="caption">{p.description}</Typography>
-                    </Box>
-                  ) : (
-                    <Paper variant="outlined">
-                      <div dangerouslySetInnerHTML={{ __html: p.content }} />
-                    </Paper>
-                  )}
-                </CardContent>
-                <CardActions>
-                  <Tooltip title="Comments">
-                    <IconButton>
-                      <CommentIcon />
+                {p.description ? (
+                  <Box>
+                    <Typography variant="caption">{p.description}</Typography>
+                  </Box>
+                ) : (
+                  <Paper variant="outlined">
+                    <div dangerouslySetInnerHTML={{ __html: p.content }} />
+                  </Paper>
+                )}
+              </CardContent>
+              <CardActions>
+                <Tooltip title="Comments">
+                  <IconButton>
+                    <CommentIcon />
+                  </IconButton>
+                </Tooltip>
+                {p.description && (
+                  <Tooltip title={p.showBody ? "Hide Body" : "Expand Body"}>
+                    <IconButton
+                      onClick={() => {
+                        // Expand and show body
+                        setPosts(
+                          posts.map((r) => {
+                            if (r._id === p._id) {
+                              return {
+                                ...r,
+                                showBody: !r.showBody,
+                              };
+                            } else {
+                              return r;
+                            }
+                          })
+                        );
+                      }}
+                    >
+                      {p.showBody ? (
+                        <ArrowDropUpRoundedIcon />
+                      ) : (
+                        <ArrowDropDownRoundedIcon />
+                      )}
                     </IconButton>
                   </Tooltip>
-                  {p.description && (
+                )}
+
+                {admin && (
+                  <IconButton
+                    onClick={() => {
+                      axios
+                        .post("/posts/delete", { id: p._id })
+                        .then((r) => {
+                          console.log(r);
+                          setPosts(posts.filter((post) => post._id !== p._id));
+                        })
+                        .catch((e) => {
+                          console.log(e);
+                        });
+                    }}
+                  >
+                    <DeleteForeverIcon />
+                  </IconButton>
+                )}
+              </CardActions>
+              {p.showBody && (
+                <Box
+                  sx={{
+                    visibility: p.showBody ? "visible" : "hidden",
+                    display: p.showBody ? "block" : "none",
+                  }}
+                >
+                  <Paper variant="outlined">
+                    <div dangerouslySetInnerHTML={{ __html: p.content }} />
                     <Tooltip title={p.showBody ? "Hide Body" : "Expand Body"}>
                       <IconButton
+                        sx={{ float: "right" }}
                         onClick={() => {
                           // Expand and show body
                           setPosts(
@@ -96,73 +151,16 @@ export default function Posts(props) {
                           );
                         }}
                       >
-                        {p.showBody ? (
-                          <ArrowDropUpRoundedIcon />
-                        ) : (
-                          <ArrowDropDownRoundedIcon />
-                        )}
+                        <CloseIcon />
                       </IconButton>
                     </Tooltip>
-                  )}
-
-                  {admin && (
-                    <IconButton
-                      onClick={() => {
-                        axios
-                          .post("/posts/delete", { id: p._id })
-                          .then((r) => {
-                            console.log(r);
-                            setPosts(
-                              posts.filter((post) => post._id !== p._id)
-                            );
-                          })
-                          .catch((e) => {
-                            console.log(e);
-                          });
-                      }}
-                    >
-                      <DeleteForeverIcon />
-                    </IconButton>
-                  )}
-                </CardActions>
-                {p.showBody && (
-                  <Box
-                    sx={{
-                      visibility: p.showBody ? "visible" : "hidden",
-                      display: p.showBody ? "block" : "none",
-                    }}
-                  >
-                    <Paper variant="outlined">
-                      <div dangerouslySetInnerHTML={{ __html: p.content }} />
-                      <Tooltip title={p.showBody ? "Hide Body" : "Expand Body"}>
-                        <IconButton
-                          sx={{ float: "right" }}
-                          onClick={() => {
-                            // Expand and show body
-                            setPosts(
-                              posts.map((r) => {
-                                if (r._id === p._id) {
-                                  return {
-                                    ...r,
-                                    showBody: !r.showBody,
-                                  };
-                                } else {
-                                  return r;
-                                }
-                              })
-                            );
-                          }}
-                        >
-                          <CloseIcon />
-                        </IconButton>
-                      </Tooltip>
-                    </Paper>
-                  </Box>
-                )}
-              </Card>
-            </Paper>
-          );
-        })}
-      </Container>
+                  </Paper>
+                </Box>
+              )}
+            </Card>
+          </Paper>
+        );
+      })}
+    </Container>
   );
 }

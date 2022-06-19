@@ -1,8 +1,10 @@
 import { Container } from "@mui/system";
 import {
   Button,
+  Checkbox,
   IconButton,
   Input,
+  InputBase,
   MenuItem,
   Paper,
   Select,
@@ -13,6 +15,7 @@ import MUIDataTable from "mui-datatables";
 import axios from "axios";
 import DeleteForever from "@mui/icons-material/DeleteForever";
 export default function CreateNewModule(props) {
+  const { _state } = props;
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
@@ -41,6 +44,25 @@ export default function CreateNewModule(props) {
         console.log(e);
       });
   }
+
+  const [users, setUsers] = useState([]);
+  // Datatable options
+
+  useEffect(() => {
+    axios
+      .get("/users/admin_users")
+      .then((r) => {
+        if (r.status === 200) {
+          console.log(r);
+          setUsers(r.data);
+        } else {
+          throw new Error();
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
 
   useEffect(() => {
     axios
@@ -88,11 +110,13 @@ export default function CreateNewModule(props) {
         sort: false,
         customBodyRenderLite: (dataIndex, rowIndex) => {
           const moduleId = modules[dataIndex].id;
-
+          const activites = modules[dataIndex].activity;
           return (
-            <Select>
-              {modules[dataIndex].activity.map((a) => (
-                <MenuItem key={a.id} value={a.id}>
+            <Select
+              defaultValue={activites.length > 0 ? activites[0]._id : "n/a"}
+            >
+              {activites.map((a) => (
+                <MenuItem key={a._id} value={a._id}>
                   {a.title}{" "}
                   <IconButton
                     onClick={() => {
@@ -122,6 +146,72 @@ export default function CreateNewModule(props) {
                     <DeleteForever fontSize="small" />
                   </IconButton>
                 </MenuItem>
+              ))}
+            </Select>
+          );
+        },
+      },
+    },
+
+    {
+      name: "users",
+      label: "Users",
+      options: {
+        filter: false,
+        sort: false,
+        customBodyRenderLite: (dataIndex, rowIndex) => {
+          // console.log("rerender");
+          const moduleId = modules[dataIndex].id;
+          return (
+            <Select defaultValue={users.length > 0 ? users[0]._id : "n/a"}>
+              {users.map((u) => (
+                <Button
+                  sx={
+                    !u.modules.includes(moduleId)
+                      ? { backgroundColor: "red" }
+                      : { backgroundColor: "green" }
+                  }
+                  key={u.id}
+                  value={u.id}
+                  onClick={() => {
+                    if (!u.modules.includes(moduleId)) {
+                      axios
+                        .put("/users/admin_addModuleToUser", {
+                          userId: u.id,
+                          moduleId,
+                        })
+                        .then((r) => {
+                          if (r.status === 200) {
+                            //
+                            _state.flash.error("Added");
+                          } else {
+                            throw new Error();
+                          }
+                        })
+                        .catch((e) => {
+                          console.log(e);
+                        });
+                    } else {
+                      axios
+                        .put("/users/admin_removeModuleFromUser", {
+                          userId: u.id,
+                          moduleId,
+                        })
+                        .then((r) => {
+                          if (r.status === 200) {
+                            _state.flash.error("Removed");
+                          } else {
+                            throw new Error();
+                          }
+                        })
+                        .catch((e) => {
+                          console.log(e);
+                        });
+                    }
+                  }}
+                >
+                  {u.fullname}
+                </Button>
               ))}
             </Select>
           );

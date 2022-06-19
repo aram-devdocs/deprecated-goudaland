@@ -1,7 +1,15 @@
 import { Container } from "@mui/system";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Editor from "./Editor";
-import { Button, Paper, Input, Typography } from "@mui/material";
+import {
+  Button,
+  InputLabel,
+  Select,
+  MenuItem,
+  Paper,
+  Input,
+  Typography,
+} from "@mui/material";
 import axios from "axios";
 export default function CreateNewPost(props) {
   const { _state } = props;
@@ -11,10 +19,14 @@ export default function CreateNewPost(props) {
   const [content, setContent] = useState("");
   const [preview, setPreview] = useState(false);
 
+  const [moduleId, setModuleId] = useState("n/a");
+
+  const [modules, setModules] = useState([]);
+
   function submitPost() {
     console.log(content);
     axios
-      .post("/posts/create", { title, content, description })
+      .post("/posts/create", { title, content, description, moduleId })
       .then((r) => {
         console.log(r);
         _state.set.content("landing");
@@ -23,6 +35,28 @@ export default function CreateNewPost(props) {
         console.log(e);
       });
   }
+
+  function handleModuleId(e) {
+    setModuleId(e.target.value);
+  }
+
+  useEffect(() => {
+    axios
+      .get("/modules")
+      .then((r) => {
+        if (r.status === 200) {
+          console.log(r);
+          setModules(r.data);
+          //   setModuleId(r.)
+        } else {
+          throw new Error();
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+      });
+  }, []);
+
   return (
     <Container>
       <Typography>Create new post:</Typography>
@@ -43,6 +77,15 @@ export default function CreateNewPost(props) {
               fullWidth
               sx={{ height: "100px" }}
             />
+            <br />
+            <InputLabel>Module:</InputLabel>
+            <Select onChange={handleModuleId} value={moduleId}>
+              <MenuItem value={"n/a"}>N/A</MenuItem>
+              {modules.map((m) => {
+                return <MenuItem value={m.id}>{m.title}</MenuItem>;
+              })}
+            </Select>
+            <br />
           </Paper>
 
           <Editor

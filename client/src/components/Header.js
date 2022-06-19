@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -7,7 +7,7 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import AddIcon from "@mui/icons-material/Add";
-import { useTheme } from "@mui/material";
+import { Menu, MenuItem, Select, useTheme } from "@mui/material";
 import { Tooltip } from "@mui/material";
 import axios from "axios";
 import { Paper } from "@mui/material";
@@ -16,6 +16,10 @@ export default function Header(props) {
   const admin = _state.get.role === "admin" ? true : false;
   const theme = useTheme();
 
+  const [fullModules, setModules] = useState([]);
+  // const [selectedModule, setSelectedModule] = useState(
+  //   localStorage.getItem("moduleId" || null)
+  // );
   // Helpers
   function logout() {
     _state.set.content("landing");
@@ -23,6 +27,34 @@ export default function Header(props) {
     axios.defaults.headers.common["x-access-token"] = "";
     localStorage.setItem("role", null);
   }
+
+  const localModules = JSON.parse(localStorage.getItem("loggedIn")).modules;
+
+  useEffect(() => {
+    if (localModules.length > 0 && !localStorage.getItem("moduleId")) {
+      localStorage.setItem("moduleId", localModules[0]);
+    }
+
+    if (fullModules.length === 0 && localModules.length > 0) {
+      console.log("searchin");
+      axios
+        .get("/users/modules")
+        .then((r) => {
+          if (r.status === 200) {
+            console.log(r);
+            setModules(r.data.modules);
+            if (!_state.get.selectedModule)
+              _state.set.selectedModule(r.data.modules[0]._id);
+            // window.location.reload();
+          } else {
+            throw new Error();
+          }
+        })
+        .catch((e) => console.log(e));
+    } else {
+    }
+  });
+
   return (
     <Box
       width
@@ -60,14 +92,27 @@ export default function Header(props) {
             </Tooltip>
           </Paper>
 
-          <Typography
-            variant="h6"
-            component="div"
-            sx={{ color: "white" }}
-          >
+          <Typography variant="h6" component="div" sx={{ color: "white" }}>
             Goudaland
           </Typography>
           {/* </Button> */}
+
+          {localModules.length > 0 && (
+            <Select value={_state.get.selectedModule}>
+              {fullModules.map((m) => (
+                <MenuItem
+                  onClick={() => {
+                    _state.set.selectedModule(m._id);
+                    localStorage.setItem("moduleId", m._id);
+                  }}
+                  value={m._id}
+                  key={m._id}
+                >
+                  {m.title}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
 
           {admin && (
             <Tooltip title="Admin Tools">

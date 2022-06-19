@@ -2,6 +2,19 @@ const express = require("express");
 const router = express.Router();
 const auth = require("../middleware/auth");
 const Activity = require("../models/activity");
+
+router.get("/:moduleId", auth, async (req, res) => {
+  const { moduleId } = req.params;
+  const activities = await Activity.find({ moduleId });
+
+  // const sorted = posts.sort(function (a, b) {
+  //   // Turn your strings into dates, and then subtract them
+  //   // to get a value that is either negative, positive, or zero.
+  //   return new Date(b.date) - new Date(a.date);
+  // });
+  res.status(200).send(activities);
+});
+
 router.post("/create", auth, (req, res) => {
   const { title, description, content, moduleId } = req.body;
 

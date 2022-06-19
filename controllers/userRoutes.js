@@ -5,16 +5,25 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const auth = require("../middleware/auth");
 
-router.post("/", auth, (req, res) => {
-  // Create token
+router.post("/", auth, async (req, res) => {
+  // Create token, keep user logged in while accessing site
   const token = jwt.sign(
-    { user_id: req.body._id, email: req.body.email, role: req.user.role},
+    { user_id: req.body._id, email: req.body.email, role: req.user.role },
     process.env.TOKEN_KEY,
     {
       expiresIn: "2h",
     }
   );
-  res.status(200).send(token);
+
+  const localModules = await User.find({}, "modules");
+  res.status(200).send({ token: token, modules: localModules[0].modules });
+});
+
+router.get("/modules", auth, (req, res) => {
+  User.findById(req.user.user_id, "modules")
+    .populate("modules")
+    .then((r) => res.status(200).send(r))
+    .catch((e) => res.status(400).send({ error: e }));
 });
 
 router.post("/register", async (req, res) => {
@@ -68,7 +77,6 @@ router.post("/register", async (req, res) => {
     user.token = token;
     user.password = undefined;
 
-
     // return new user
     return res.status(201).json(user);
   } catch (err) {
@@ -77,7 +85,6 @@ router.post("/register", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-
   try {
     // Get user input
     const { email, password } = req.body;
@@ -112,8 +119,57 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/welcome", auth, (req, res) => {
-  return res.status(200).send("Welcome 🙌 ");
+router.get("/admin_users", auth, (req, res) => {
+  if (req.user.role !== "admin")
+    res.status(400).send("Only admins have access to this route");
+
+  User.find({}, "fname lname fullname email id modules role")
+    // .populate("fullname")
+    .then((r) => {
+      res.status(200).send(r);
+    })
+    .catch((e) => {
+      console.log(e);
+      res.status(400).send({ error: e });
+    });
+});
+
+router.get("/admin_usersPopulateModules", auth, (req, res) => {
+  if (req.user.role !== "admin")
+    res.status(400).send("Only admins have access to this route");
+
+  User.find({}, "fname lname fullname email id modules role")
+    .populate("modules")
+    // .populate("fullname")
+    .then((r) => {
+      res.status(200).send(r);
+    })
+    .catch((e) => {
+      console.log(e);
+      res.status(400).send({ error: e });
+    });
+});
+
+router.put("/admin_addModuleToUser", auth, (req, res) => {
+  if (req.user.role !== "admin")
+    res.status(400).send("Only admins have access to this route");
+
+  const { userId, moduleId } = req.body;
+
+  User.findByIdAndUpdate({ _id: userId }, { $push: { modules: moduleId } })
+    .then((r) => res.status(200).send("Added module to user"))
+    .catch((e) => res.status(400).send({ error: e }));
+});
+
+router.put("/admin_removeModuleFromUser", auth, (req, res) => {
+  if (req.user.role !== "admin")
+    res.status(400).send("Only admins have access to this route");
+
+  const { userId, moduleId } = req.body;
+
+  User.findByIdAndUpdate({ _id: userId }, { $pull: { modules: moduleId } })
+    .then((r) => res.status(200).send("removed module to user"))
+    .catch((e) => res.status(400).send({ error: e }));
 });
 
 module.exports = router;

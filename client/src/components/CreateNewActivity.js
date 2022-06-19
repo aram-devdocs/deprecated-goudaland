@@ -34,6 +34,10 @@ export default function CreateNewActivity(props) {
       .then((r) => {
         if (r.status === 200) {
           console.log(r);
+          setTitle("")
+          setDescription("")
+          setContent("")
+          setModuleId("n/a")
           //   setModules([...modules, r.data.data]);
         } else {
           throw new Error();

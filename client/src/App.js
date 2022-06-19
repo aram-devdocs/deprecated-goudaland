@@ -12,12 +12,13 @@ import Login from "./components/Login";
 import MasterLoader from "./components/MasterLoader";
 import { Container } from "@mui/system";
 import Header from "./components/Header";
-import CreateNewPost from "./components/CreateNewPost";
 import Landing from "./components/Landing";
 import Posts from "./components/Posts";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Modules from "./components/Modules";
 import Admin from "./components/Admin";
+import FlashMessage from "./components/FlashMessage";
+import Activites from "./components/Activties";
 export default function App() {
   // Handle Axios Settings
   axios.defaults.baseURL = "http://localhost:3005"; // PROD: MOVE TO PROCESS
@@ -30,6 +31,9 @@ export default function App() {
   const [content, setContent] = useState(
     localStorage.getItem("last_content") || "landing"
   );
+  const [selectedModule, setSelectedModule] = useState(
+    localStorage.getItem("moduleId" || null)
+  );
   const [history, setHistory] = useState([]);
   // Set _state States
   const [view, setView] = useState([]);
@@ -38,11 +42,16 @@ export default function App() {
   );
   const [role, setRole] = useState(localStorage.getItem("role") || "student");
 
+  // Set Flash Messagae
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState(false);
+  const [severity, setSeverity] = useState("error");
   // Global _state handler
   const _state = {
     get: {
-      view: view,
-      role: role,
+      view,
+      role,
+      selectedModule,
     },
     set: {
       view: (data) => setView(data),
@@ -64,6 +73,17 @@ export default function App() {
 
         setLoggedIn(data);
       },
+      selectedModule: (data) => {
+        setSelectedModule(data);
+      },
+    },
+
+    flash: {
+      error: (msg) => {
+        setSeverity("error");
+        setAlertMessage(msg);
+        setAlertOpen(true);
+      },
     },
 
     switch: {},
@@ -79,8 +99,12 @@ export default function App() {
       axios
         .post("/users", loggedIn)
         .then((r) => {
-          // console.log(r);
-          _state.set.loggedIn({ ...loggedIn, token: r.data });
+          // console.log(r.data.modules);
+          _state.set.loggedIn({
+            ...loggedIn,
+            token: r.data.token,
+            modules: r.data.modules,
+          });
           setLoader(false);
         })
         .catch((e) => {
@@ -109,8 +133,9 @@ export default function App() {
     admin: <Admin _state={_state} />,
     posts: <Posts _state={_state} />,
     calendar: "",
-    modules: <Modules _state={_state} />,
+    modules: <Activites _state={_state} />,
     settings: "",
+    loader: <MasterLoader />,
   };
 
   return (
@@ -143,7 +168,7 @@ export default function App() {
                   }
                   setHistory([]);
                   setContent("landing");
-                  localStorage.removeItem("last_content")
+                  localStorage.removeItem("last_content");
                 }}
               >
                 <ArrowBackIcon />
@@ -166,6 +191,12 @@ export default function App() {
             </div>
           )}
         </main>
+        <FlashMessage
+          openSnackbar={alertOpen}
+          setOpenSnackbar={setAlertOpen}
+          message={alertMessage}
+          severity={severity}
+        />
       </Box>
     </ThemeProvider>
   );

@@ -16,6 +16,11 @@ import {
 export default function Landing(props) {
   const { _state } = props;
   const admin = _state.get.role === "admin" ? true : false;
+  const localModules = JSON.parse(localStorage.getItem("loggedIn")).modules;
+
+  if (localModules.length === 0) {
+    return <div>You aint got no modules dawg</div>;
+  }
 
   return (
     <Box sx={{ flexGrow: 1, margin: "80px" }}>
@@ -50,46 +55,18 @@ export default function Landing(props) {
                 overflow: "auto",
               }}
             >
-              <CardContent>Modules</CardContent>
+              <CardContent>Activites</CardContent>
               <CardActions>
-                <Button size="small" onClick={()=> _state.set.content("modules")}>View All</Button>
+                <Button
+                  size="small"
+                  onClick={() => _state.set.content("modules")}
+                >
+                  View All
+                </Button>
               </CardActions>
             </Card>
           </Paper>
         </Grid>
-        <Grid item xs={6}>
-          <Paper elevation={5}>
-            <Card
-              sx={{
-                minWidth: 275,
-                height: "300px",
-                overflow: "auto",
-              }}
-            >
-              <CardContent>Calendar</CardContent>
-              <CardActions>
-                <Button size="small">Expand</Button>
-              </CardActions>
-            </Card>
-          </Paper>
-        </Grid>
-        <Grid item xs={6}>
-          <Paper elevation={5}>
-            <Card
-              sx={{
-                minWidth: 275,
-                height: "300px",
-                overflow: "auto",
-              }}
-            >
-              <CardContent>Settings</CardContent>
-              <CardActions>
-                <Button size="small">View All</Button>
-              </CardActions>
-            </Card>
-          </Paper>
-        </Grid>
-        
       </Grid>
     </Box>
   );

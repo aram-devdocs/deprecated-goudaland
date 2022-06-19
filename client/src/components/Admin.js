@@ -8,6 +8,7 @@ import Box from "@mui/material/Box";
 import CreateNewPost from "./CreateNewPost";
 import CreateNewModule from "./CreateNewModule";
 import CreateNewActivity from "./CreateNewActivity";
+import EditUser from "./EditUser";
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -58,22 +59,21 @@ export default function Admin(props) {
         <Tab label="Posts" {...a11yProps(0)} />
         <Tab label="Modules" {...a11yProps(1)} />
         <Tab label="Activites" {...a11yProps(2)} />
+        <Tab label="Users" {...a11yProps(3)} />
+
       </Tabs>
 
       <TabPanel value={value} index={0}>
-        <CreateNewPost
-        // _state={_state}
-        />
+        <CreateNewPost _state={_state} />
       </TabPanel>
       <TabPanel value={value} index={1}>
-        <CreateNewModule
-        // _state={_state}
-        />
+        <CreateNewModule _state={_state} />
       </TabPanel>
       <TabPanel value={value} index={2}>
-        <CreateNewActivity
-        // _state={_state}
-        />
+        <CreateNewActivity _state={_state} />
+      </TabPanel>
+      <TabPanel value={value} index={3}>
+        <EditUser _state={_state} />
       </TabPanel>
     </Container>
   );
