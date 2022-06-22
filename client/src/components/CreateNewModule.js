@@ -18,6 +18,7 @@ export default function CreateNewModule(props) {
   const { _state } = props;
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [itt, setItt] = useState(0)
 
   const [modules, setModules] = useState([]);
 
@@ -62,7 +63,7 @@ export default function CreateNewModule(props) {
       .catch((e) => {
         console.log(e);
       });
-  }, []);
+  }, [itt]);
 
   useEffect(() => {
     axios
@@ -208,6 +209,8 @@ export default function CreateNewModule(props) {
                           console.log(e);
                         });
                     }
+
+                    setItt(itt + 1)
                   }}
                 >
                   {u.fullname}

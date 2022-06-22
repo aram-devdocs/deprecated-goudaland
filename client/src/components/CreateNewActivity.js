@@ -22,7 +22,7 @@ export default function CreateNewActivity(props) {
   const [preview, setPreview] = useState([]);
   const [modules, setModules] = useState([]);
 
-  const [questions, setQuestions] = useState([]);
+  // const [questions, setQuestions] = useState([]);
 
   const [question, setQuestion] = useState({
     name: "",
@@ -46,15 +46,22 @@ export default function CreateNewActivity(props) {
     setModuleId(e.target.value);
   }
   function createActivity() {
+    console.log(content);
+    // return;
     if (moduleId === "n/a") return;
     axios
-      .post("/activites/create", { title, description, content, moduleId })
+      .post("/activites/create", {
+        title,
+        description,
+        content: JSON.stringify(content),
+        moduleId,
+      })
       .then((r) => {
         if (r.status === 200) {
           console.log(r);
           setTitle("");
           setDescription("");
-          setContent("");
+          setContent([]);
           setModuleId("n/a");
           //   setModules([...modules, r.data.data]);
         } else {
@@ -118,6 +125,7 @@ export default function CreateNewActivity(props) {
             onClick={() => {
               content.push({
                 ...question,
+                type: "multiple_choice",
                 choices: question.choices.map((q, i) => {
                   return { index: i, text: q };
                 }),
@@ -225,8 +233,10 @@ export default function CreateNewActivity(props) {
         answer={0}
       />
 
+       */}
+
       <br />
-      <CodeCheck question={"Code question"} answer={"The text"} /> */}
+      <CodeCheck question={"Code question"} answer={"The text"} />
     </Container>
   );
 }

@@ -1,52 +1,65 @@
-import React, { useState, useEffect } from "react";
-import Prism from "prismjs";
+import React, { useState } from "react";
+import CodeMirror from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
+import { Container } from "@mui/system";
+import { Box, Typography } from "@mui/material";
+// import Box from "@mui/system";
 
-// import "../styles/prism.css"
+import Interpreter from "js-interpreter";
+export default function CodeEditor() {
+  const [results, setResults] = useState("");
+  const myInterpreter = new Interpreter("");
+  function nextStep() {
+    if (myInterpreter.step()) {
+      // console.log()
+      window.setTimeout(nextStep, 0);
+    } else {
+      console.log("safe");
 
-
-const CodeEditor = props => {
-  const [content, setContent] = useState(props.content);
-
-  const handleKeyDown = e => {
-    let value = content, selStartPos = e.currentTarget.selectionStart;
-
-    console.log(e.currentTarget);
-
-    // handle 4-space indent on
-    if (e.key === "Tab") {
-      value = value.substring(0, selStartPos) + "    " +
-      value.substring(selStartPos, value.length);
-      e.currentTarget.selectionStart = selStartPos + 3;
-      e.currentTarget.selectionEnd = selStartPos + 4;
-      e.preventDefault();
-
-      setContent(value);
+      return true;
     }
-  };
+  }
 
-  useEffect(() => {
-    Prism.highlightAll();
+  const onChange = React.useCallback(async (value, viewUpdate) => {
+    // console.log("value:", value);
+
+    // i;
+    if (await nextStep()) {
+      myInterpreter.append();
+      myInterpreter.run();
+      setResults(myInterpreter.value);
+      // alert(myInterpreter.value);
+    }
   }, []);
 
-  useEffect(() => {
-    Prism.highlightAll();
-  }, [props.language, content]);
-
   return (
-    <div className="code-edit-container">
-       
-      <textarea
-        className="code-input"
-        value={content}
-        onChange={e => setContent(e.target.value)}
-        onKeyDown={handleKeyDown} >
-      </textarea>
-      <pre className="code-output">
-          <code className={`language-${props.language}`}>{content}</code>
-      </pre>
-     
-    </div>
-  );
-};
+    <Container>
+      <CodeMirror
+        value="console.log('hello world!');"
+        height="200px"
+        extensions={[javascript({ jsx: true })]}
+        onChange={onChange}
+      />
+      <Typography></Typography>
 
-export default CodeEditor;
+      {/* <Box></Box> */}
+      <Box>
+        <iframe
+          title="sandbox"
+          src="https://codesandbox.io/embed/new?codemirror=1"
+          style={{
+            width: "100%",
+            height: "500px",
+            border: 0,
+            bordeRadius: "4px",
+            overflow: "hidden",
+          }}
+          // style="width:100%; height:500px; border:0; border-radius: 4px; overflow:hidden;"
+          allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+          sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+        ></iframe>
+      </Box>
+    </Container>
+  );
+}
+// export default App;

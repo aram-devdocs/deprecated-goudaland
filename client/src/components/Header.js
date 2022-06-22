@@ -128,7 +128,7 @@ export default function Header(props) {
               </IconButton>
             </Tooltip>
           )}
-          <Button sx={{ marginLeft: "70%" }} onClick={logout} color="inherit">
+          <Button sx={{ float: "right" }} onClick={logout} color="inherit">
             Logout
           </Button>
         </Toolbar>

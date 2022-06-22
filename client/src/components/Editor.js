@@ -55,6 +55,7 @@ function EditorContainer(props) {
       {/* // TODO : Clean up editor styling */}
       <Editor
         // toolbarOnFocus
+        spellCheck={true}
         editorState={editorState}
         toolbarClassName="toolbarClassName"
         wrapperClassName="wrapperClassName"
